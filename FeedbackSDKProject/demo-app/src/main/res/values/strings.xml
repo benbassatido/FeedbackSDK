@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Feedback SDK Demo</string>
+    <string name="select_feedback_type">Select Feedback Type</string>
+    <string name="feedback_1">Feedback 1</string>
+    <string name="feedback_2">Feedback 2</string>
+    <string name="feedback_3">Feedback 3</string>
+</resources>

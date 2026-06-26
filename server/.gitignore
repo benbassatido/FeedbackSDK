@@ -1,0 +1,26 @@
+# ──────────────────────────────────────────────
+# Python / FastAPI (server)
+# ──────────────────────────────────────────────
+
+# Environment & secrets (keep .env.example committed)
+.env
+.env.*
+!.env.example
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Byte-compiled / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/

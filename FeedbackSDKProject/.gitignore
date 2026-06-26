@@ -1,0 +1,30 @@
+# ──────────────────────────────────────────────
+# Android / Gradle (FeedbackSDKProject)
+# ──────────────────────────────────────────────
+
+# Build output
+build/
+*/build/
+.gradle/
+.cxx/
+
+# Local, machine-specific config (SDK paths, keys)
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.navigation/
+
+# Keystores & signing (never commit these)
+*.jks
+*.keystore
+
+# Generated / misc
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+.DS_Store

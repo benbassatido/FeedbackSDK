@@ -1,0 +1,152 @@
+.survey-bg {
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.survey {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.survey-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.survey-head {
+  padding-top: 22px;
+  overflow: hidden;
+}
+
+.survey-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--accent);
+}
+
+.survey-title {
+  margin: 0;
+  font-size: 22px;
+}
+
+.survey-desc {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+.survey-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.survey-q-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.survey-q-num {
+  color: var(--accent);
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.preview-required {
+  color: #dc2626;
+}
+
+.survey-stars {
+  display: flex;
+  gap: 6px;
+}
+
+.survey-star {
+  font-size: 30px;
+  line-height: 1;
+  color: var(--border);
+  cursor: pointer;
+  transition: color 0.1s ease, transform 0.1s ease;
+}
+
+.survey-star:hover {
+  transform: scale(1.1);
+}
+
+.survey-star.on {
+  color: #f5a623;
+}
+
+.survey-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.survey-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.survey-option:hover {
+  background: var(--surface-2);
+}
+
+.survey-hint {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.survey-text {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.survey-text:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.survey-counter {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.survey-submit {
+  align-self: flex-start;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 15px;
+  cursor: pointer;
+}

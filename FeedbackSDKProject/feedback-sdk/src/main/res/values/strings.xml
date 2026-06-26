@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feedback_sdk_title">Send Feedback</string>
+    <string name="feedback_sdk_submit">Submit Feedback</string>
+    <string name="feedback_sdk_success">Thank you! Your feedback has been submitted.</string>
+    <string name="feedback_sdk_error_required">Please fill in all required fields.</string>
+    <string name="feedback_sdk_not_initialized">FeedbackSDK is not initialized. Call FeedbackSDK.init() first.</string>
+    <string name="feedback_sdk_submitting">Submitting…</string>
+    <string name="feedback_sdk_error_submit">Failed to submit feedback: %1$s</string>
+    <string name="feedback_sdk_loading">Loading form…</string>
+    <string name="feedback_sdk_include_screenshot">Attach screenshot</string>
+    <string name="feedback_sdk_saved_offline">No connection - your feedback was saved and will be sent automatically when you\'re back online.</string>
+</resources>
