@@ -2,6 +2,7 @@ package com.example.feedbacksdk.data
 
 import android.content.Context
 import android.util.Log
+import com.example.feedbacksdk.LOG_TAG
 import com.example.feedbacksdk.model.FeedbackItem
 import com.example.feedbacksdk.util.NetworkUtil
 import com.google.gson.Gson
@@ -13,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal object FeedbackQueue {
 
-    private const val TAG = "FeedbackSDK"
     private const val FILE_NAME = "feedback_sdk_queue.json"
     private const val MAX_ITEMS = 100
 
@@ -29,7 +29,7 @@ internal object FeedbackQueue {
             items.add(item)
             while (items.size > MAX_ITEMS) items.removeAt(0)
             write(appContext, items)
-            Log.d(TAG, "Queued feedback ${item.feedbackId} for later (${items.size} pending)")
+            Log.d(LOG_TAG, "Queued feedback ${item.feedbackId} for later (${items.size} pending)")
         }
     }
 
@@ -51,9 +51,9 @@ internal object FeedbackQueue {
                     }
                     when (val result = send(item)) {
                         SendResult.SUCCESS ->
-                            Log.d(TAG, "Replayed queued feedback ${item.feedbackId}")
+                            Log.d(LOG_TAG, "Replayed queued feedback ${item.feedbackId}")
                         SendResult.DROP ->
-                            Log.w(TAG, "Dropping unsendable feedback ${item.feedbackId}")
+                            Log.w(LOG_TAG, "Dropping unsendable feedback ${item.feedbackId}")
                         SendResult.RETRY -> {
                             remaining.add(item)
                             stop = true
@@ -72,11 +72,11 @@ internal object FeedbackQueue {
             val response = ApiClient.feedbackApi().postFeedback(item).execute()
             when {
                 response.isSuccessful -> SendResult.SUCCESS
-                response.code() in 400..499 -> SendResult.DROP
+                !httpErrorRetryable(response.code()) -> SendResult.DROP
                 else -> SendResult.RETRY
             }
         } catch (e: IOException) {
-            Log.d(TAG, "Still offline; keeping ${item.feedbackId} queued", e)
+            Log.d(LOG_TAG, "Still offline; keeping ${item.feedbackId} queued", e)
             SendResult.RETRY
         }
     }
@@ -87,7 +87,7 @@ internal object FeedbackQueue {
         return runCatching {
             gson.fromJson<MutableList<FeedbackItem>>(file.readText(), listType) ?: mutableListOf()
         }.getOrElse {
-            Log.w(TAG, "Failed to read feedback queue", it)
+            Log.w(LOG_TAG, "Failed to read feedback queue", it)
             mutableListOf()
         }
     }
@@ -96,7 +96,7 @@ internal object FeedbackQueue {
         val file = File(context.filesDir, FILE_NAME)
         runCatching {
             if (items.isEmpty()) file.delete() else file.writeText(gson.toJson(items, listType))
-        }.onFailure { Log.w(TAG, "Failed to write feedback queue", it) }
+        }.onFailure { Log.w(LOG_TAG, "Failed to write feedback queue", it) }
     }
 
     private enum class SendResult { SUCCESS, DROP, RETRY }

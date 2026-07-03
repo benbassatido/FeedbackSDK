@@ -1,4 +1,5 @@
-import { FEEDBACK_STATUSES, screenshotUrl, type Feedback, type FeedbackStatus } from "../api";
+import { useEffect, useState } from "react";
+import { FEEDBACK_STATUSES, fetchScreenshot, type Feedback, type FeedbackStatus } from "../api";
 import { formatDate, stringify } from "../format";
 import "./FeedbackDetail.css";
 
@@ -26,8 +27,32 @@ function Section({ title, entries }: { title: string; entries: [string, unknown]
 }
 
 function ViewScreenshot({ feedback }: { feedback: Feedback }) {
-  const url = screenshotUrl(feedback);
-  if (!url) return null;
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!feedback.screenshotUrl) {
+      setUrl(null);
+      return;
+    }
+    let objectUrl: string | null = null;
+    let active = true;
+    fetchScreenshot(feedback)
+      .then((u) => {
+        if (!active) {
+          if (u) URL.revokeObjectURL(u);
+          return;
+        }
+        objectUrl = u;
+        setUrl(u);
+      })
+      .catch(() => setUrl(null));
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [feedback.feedbackId, feedback.screenshotUrl]);
+
+  if (!feedback.screenshotUrl || !url) return null;
   return (
     <section className="detail-section">
       <h3>Screenshot</h3>

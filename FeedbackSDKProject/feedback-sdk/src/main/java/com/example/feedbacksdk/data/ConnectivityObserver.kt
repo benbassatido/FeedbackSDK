@@ -4,11 +4,11 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.util.Log
+import com.example.feedbacksdk.LOG_TAG
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal object ConnectivityObserver {
 
-    private const val TAG = "FeedbackSDK"
     private val registered = AtomicBoolean(false)
 
     fun start(context: Context) {
@@ -29,7 +29,7 @@ internal object ConnectivityObserver {
         runCatching { manager.registerDefaultNetworkCallback(callback) }
             .onFailure {
                 registered.set(false)
-                Log.w(TAG, "Failed to register network callback", it)
+                Log.w(LOG_TAG, "Failed to register network callback", it)
             }
     }
 }

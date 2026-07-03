@@ -11,6 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 
 from database import Base
+from defaults import DEFAULT_COLORS
 
 
 class Feedback(Base):
@@ -54,9 +55,9 @@ class FormDesign(Base):
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     fields = Column(JSONB, nullable=False, default=list)
-    background_color = Column(String, nullable=False, default="#F4F5FB")
-    card_color = Column(String, nullable=False, default="#FFFFFF")
-    title_color = Column(String, nullable=False, default="#15172B")
-    button_color = Column(String, nullable=False, default="#4F46E5")
+    background_color = Column(String, nullable=False, default=DEFAULT_COLORS["background"])
+    card_color = Column(String, nullable=False, default=DEFAULT_COLORS["card"])
+    title_color = Column(String, nullable=False, default=DEFAULT_COLORS["title"])
+    button_color = Column(String, nullable=False, default=DEFAULT_COLORS["button"])
     created_at = Column(BigInteger, nullable=False)
     updated_at = Column(BigInteger, nullable=False)

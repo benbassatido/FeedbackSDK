@@ -29,6 +29,9 @@ Desktop.ini
 *.log
 *.tmp
 
+# Local non-code deliverables
+AllButNoCode/
+
 # Environment files (never commit secrets).
 # A committed *.env.example documents the required keys.
 .env

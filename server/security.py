@@ -9,7 +9,17 @@ from typing import Optional
 
 import bcrypt
 
-SECRET_KEY = os.getenv("AUTH_SECRET", "dev-secret-change-me")
+_DEV_FALLBACK_SECRET = "dev-secret-change-me"
+
+SECRET_KEY = os.getenv("AUTH_SECRET")
+if not SECRET_KEY:
+    if os.getenv("APP_ENV", "dev").lower() == "dev":
+        SECRET_KEY = _DEV_FALLBACK_SECRET
+    else:
+        raise RuntimeError(
+            "AUTH_SECRET is not set. Set a long random AUTH_SECRET for non-dev deployments."
+        )
+
 TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60
 
 

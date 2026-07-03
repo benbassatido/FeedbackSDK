@@ -5,9 +5,9 @@ import android.graphics.Bitmap
 import com.example.feedbacksdk.util.ScreenshotCache
 import com.example.feedbacksdk.util.ScreenshotCapturer
 
-internal object ScreenshotUploader {
+internal object ScreenshotPreparer {
 
-    fun uploadScreenShot(context: Context, bitmap: Bitmap?, feedbackId: String): String? {
+    fun prepareScreenshot(context: Context, bitmap: Bitmap?, feedbackId: String): String? {
         if (bitmap == null) return null
         val bytes = ScreenshotCapturer.compressScreenShot(bitmap)
         ScreenshotCache.saveTemp(context, bytes, feedbackId)

@@ -1,4 +1,4 @@
-import { getToken, logout } from "./auth";
+import { authHeaders, handleUnauthorized, parseErrorDetail } from "./http";
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
@@ -62,24 +62,13 @@ export interface Design {
 export type DesignInput = Omit<Design, "id">;
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = getToken();
-  const headers = new Headers(init?.headers);
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-
-  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    headers: authHeaders(init?.headers),
+  });
   if (!response.ok) {
-    if (response.status === 401) {
-      logout();
-      window.dispatchEvent(new Event("auth:expired"));
-    }
-    let detail = `${response.status} ${response.statusText}`;
-    try {
-      const body = await response.json();
-      if (body?.detail) detail = body.detail;
-    } catch {
-      detail = `${response.status} ${response.statusText}`;
-    }
-    throw new Error(detail);
+    handleUnauthorized(response);
+    throw new Error(await parseErrorDetail(response));
   }
   return response.json() as Promise<T>;
 }
@@ -104,8 +93,16 @@ export function markAsViewed(id: string): Promise<Feedback> {
   return request<Feedback>(`/feedback/${id}/viewed`, { method: "PATCH" });
 }
 
-export function screenshotUrl(feedback: Feedback): string | null {
-  return feedback.screenshotUrl ? `${API_BASE_URL}${feedback.screenshotUrl}` : null;
+export async function fetchScreenshot(feedback: Feedback): Promise<string | null> {
+  if (!feedback.screenshotUrl) return null;
+  const response = await fetch(`${API_BASE_URL}${feedback.screenshotUrl}`, {
+    headers: authHeaders(),
+  });
+  if (!response.ok) {
+    handleUnauthorized(response);
+    throw new Error(await parseErrorDetail(response));
+  }
+  return URL.createObjectURL(await response.blob());
 }
 
 export function listDesigns(): Promise<Design[]> {

@@ -23,6 +23,12 @@ Each registered portal user gets a unique **API key**. Feedback and designs are 
 
 ---
 
+## 🎥 Demo Video
+
+▶️ [Watch the project demo on YouTube](https://youtu.be/d9nTsyu9k5M)
+
+---
+
 ## ✨ Features
 
 - 📝 **Structured feedback** — message, star rating, feedback type, and custom fields
@@ -88,7 +94,11 @@ cp .env.example .env
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@HOST/DB?sslmode=require
 AUTH_SECRET=change-me-to-a-long-random-string
+# Comma-separated origins allowed to call the API from a browser (the web portal)
+ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
+
+> On a **fresh** database the tables are created automatically on startup. If you are **upgrading** an existing database, run the one-shot migration first: `python migrate.py`.
 
 ### 3️⃣ Web portal setup
 

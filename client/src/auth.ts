@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./api";
+import { parseErrorDetail } from "./http";
 
 const AUTH_KEY = "feedback_portal_session";
 
@@ -23,14 +24,7 @@ async function authRequest(path: string, body: unknown): Promise<AuthResponse> {
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    let detail = `${response.status} ${response.statusText}`;
-    try {
-      const data = await response.json();
-      if (data?.detail) detail = data.detail;
-    } catch {
-      detail = `${response.status} ${response.statusText}`;
-    }
-    throw new Error(detail);
+    throw new Error(await parseErrorDetail(response));
   }
   return response.json() as Promise<AuthResponse>;
 }

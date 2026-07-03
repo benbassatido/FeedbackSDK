@@ -8,7 +8,7 @@ internal object FeedbackValidator {
         for (field in fields) {
             val text = answers[field.fieldId]?.toString()?.trim().orEmpty()
             if (field.required && text.isEmpty()) return false
-            if (field.type == "text" && field.maxLength != null && text.length > field.maxLength) {
+            if (field.type == FieldTypes.TEXT && field.maxLength != null && text.length > field.maxLength) {
                 return false
             }
         }

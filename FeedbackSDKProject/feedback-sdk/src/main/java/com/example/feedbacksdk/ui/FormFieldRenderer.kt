@@ -11,6 +11,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.feedbacksdk.R
+import com.example.feedbacksdk.core.FieldTypes
 import com.example.feedbacksdk.model.FeedbackField
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
@@ -20,25 +21,25 @@ internal object FormFieldRenderer {
 
     fun renderField(context: Context, field: FeedbackField, container: ViewGroup): View {
         return when (field.type) {
-            "dropdown" -> renderDropdown(context, field, container)
-            "rating" -> renderRating(context, field, container)
-            "text" -> renderText(context, field, container)
+            FieldTypes.DROPDOWN -> renderDropdown(context, field, container)
+            FieldTypes.RATING -> renderRating(context, field, container)
+            FieldTypes.TEXT -> renderText(context, field, container)
             else -> renderText(context, field, container)
         }
     }
 
     fun getFieldValue(view: View, fieldType: String): Any? {
         return when (fieldType) {
-            "dropdown" -> {
+            FieldTypes.DROPDOWN -> {
                 val textInput = view as TextInputLayout
                 val autoComplete = textInput.editText as? MaterialAutoCompleteTextView
                 autoComplete?.text?.toString()?.takeIf { it.isNotBlank() }
             }
-            "rating" -> {
+            FieldTypes.RATING -> {
                 val ratingBar = view.findViewWithTag<RatingBar>("rating_bar")
                 ratingBar?.rating?.takeIf { it > 0f }
             }
-            "text" -> {
+            FieldTypes.TEXT -> {
                 val textInput = view as TextInputLayout
                 textInput.editText?.text?.toString()?.takeIf { it.isNotBlank() }
             }

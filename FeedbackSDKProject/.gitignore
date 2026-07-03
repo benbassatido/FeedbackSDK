@@ -11,6 +11,8 @@ build/
 # Local, machine-specific config (SDK paths, keys)
 local.properties
 
+demo-app/secrets.properties
+
 # Android Studio / IntelliJ
 .idea/
 *.iml

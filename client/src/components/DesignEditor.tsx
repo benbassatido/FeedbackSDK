@@ -9,6 +9,12 @@ import {
   type FormField,
 } from "../api";
 import FormPreview from "./FormPreview";
+import {
+  DEFAULT_COLORS,
+  DEFAULT_FORM_DESCRIPTION,
+  DEFAULT_FORM_TITLE,
+  HEX_COLOR_RE,
+} from "../constants";
 import "./DesignEditor.css";
 
 interface Props {
@@ -29,13 +35,6 @@ interface EditableField {
 }
 
 const FIELD_TYPES: FieldType[] = ["text", "dropdown", "rating"];
-
-const DEFAULT_COLORS = {
-  backgroundColor: "#F4F5FB",
-  cardColor: "#FFFFFF",
-  titleColor: "#15172B",
-  buttonColor: "#4F46E5",
-};
 
 let keyCounter = 0;
 function nextKey(): string {
@@ -79,9 +78,22 @@ function defaultFields(): EditableField[] {
   ];
 }
 
-function validate(name: string, title: string, fields: EditableField[]): string | null {
+function validate(
+  name: string,
+  title: string,
+  fields: EditableField[],
+  colors: typeof DEFAULT_COLORS,
+): string | null {
   if (!name.trim()) return "Design name must not be empty.";
   if (!title.trim()) return "Form title must not be empty.";
+  for (const [value, label] of [
+    [colors.backgroundColor, "Background"],
+    [colors.cardColor, "Card"],
+    [colors.titleColor, "Title"],
+    [colors.buttonColor, "Button"],
+  ] as const) {
+    if (!HEX_COLOR_RE.test(value)) return `${label} color must be a hex value like #1A2B3C.`;
+  }
   if (fields.length === 0) return "Add at least one field.";
   const ids = new Set<string>();
   for (const f of fields) {
@@ -125,7 +137,7 @@ function ColorField({
 export default function DesignEditor({ designId, onSaved, onBack }: Props) {
   const [existingId, setExistingId] = useState<number | null>(designId);
   const [name, setName] = useState("");
-  const [title, setTitle] = useState("Send Feedback");
+  const [title, setTitle] = useState(DEFAULT_FORM_TITLE);
   const [description, setDescription] = useState("");
   const [fields, setFields] = useState<EditableField[]>([]);
   const [colors, setColors] = useState(DEFAULT_COLORS);
@@ -152,8 +164,8 @@ export default function DesignEditor({ designId, onSaved, onBack }: Props) {
     if (designId == null) {
       setExistingId(null);
       setName("");
-      setTitle("Send Feedback");
-      setDescription("We'd love to hear from you. Please fill out the form below.");
+      setTitle(DEFAULT_FORM_TITLE);
+      setDescription(DEFAULT_FORM_DESCRIPTION);
       setFields(defaultFields());
       setColors(DEFAULT_COLORS);
       setLoading(false);
@@ -219,7 +231,7 @@ export default function DesignEditor({ designId, onSaved, onBack }: Props) {
   }
 
   function handleSave() {
-    const validationError = validate(name, title, fields);
+    const validationError = validate(name, title, fields, colors);
     if (validationError) {
       setMessage(null);
       setError(validationError);

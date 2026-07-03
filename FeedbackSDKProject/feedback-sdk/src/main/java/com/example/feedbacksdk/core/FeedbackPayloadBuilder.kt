@@ -21,7 +21,7 @@ internal object FeedbackPayloadBuilder {
             userEmail = FeedbackSDK.getUserEmail(),
             answers = answers,
             metadata = FeedbackSDK.getMetadata(),
-            status = "pending",
+            status = FeedbackStatuses.PENDING,
             createdAt = now,
             updatedAt = now,
             screenshotBase64 = screenshotBase64,

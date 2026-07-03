@@ -160,9 +160,9 @@ feedback-sdk/src/main/java/com/example/feedbacksdk/
 ├── FeedbackSDK.kt            # Public API + state
 ├── core/                     # FeedbackValidator, FeedbackPayloadBuilder,
 │                             #   DefaultDesign, DefaultFormConfig, ScreenshotHolder
-├── data/                     # ApiClient, FeedbackApi, FeedbackRepository,
-│                             #   DesignRepository, ScreenshotUploader,
-│                             #   FeedbackQueue, ConnectivityObserver
+├── data/                     # ApiClient, FeedbackApi, CallExtensions,
+│                             #   FeedbackRepository, DesignRepository,
+│                             #   ScreenshotPreparer, FeedbackQueue, ConnectivityObserver
 ├── model/                    # FeedbackItem, FeedbackDesign, FeedbackField,
 │                             #   FeedbackFormConfig, DeviceInfo, AppInfo
 ├── ui/                       # FeedbackActivity, FormFieldRenderer
@@ -176,7 +176,7 @@ feedback-sdk/src/main/java/com/example/feedbacksdk/
 | Networking | `data/ApiClient` (Retrofit + `X-Api-Key` interceptor), `data/FeedbackApi` |
 | Submission | `data/FeedbackRepository`, `core/FeedbackPayloadBuilder` |
 | Dynamic forms | `data/DesignRepository`, `ui/FormFieldRenderer`, `core/DefaultDesign` |
-| Screenshots | `util/ScreenshotCapturer`, `util/ScreenshotCache`, `data/ScreenshotUploader` |
+| Screenshots | `util/ScreenshotCapturer`, `util/ScreenshotCache`, `data/ScreenshotPreparer` |
 | Offline | `data/FeedbackQueue`, `data/ConnectivityObserver`, `util/NetworkUtil` |
 | Context | `util/DeviceInfoCollector`, `util/AppInfoCollector` |
 

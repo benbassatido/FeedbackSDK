@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.feedbacksdk.FeedbackSDK
+import com.example.feedbacksdk.LOG_TAG
 import com.example.feedbacksdk.R
 import com.example.feedbacksdk.core.FeedbackPayloadBuilder
 import com.example.feedbacksdk.core.FeedbackValidator
@@ -20,7 +21,7 @@ import com.example.feedbacksdk.core.ScreenshotHolder
 import com.example.feedbacksdk.data.DesignRepository
 import com.example.feedbacksdk.data.FeedbackQueue
 import com.example.feedbacksdk.data.FeedbackRepository
-import com.example.feedbacksdk.data.ScreenshotUploader
+import com.example.feedbacksdk.data.ScreenshotPreparer
 import com.example.feedbacksdk.model.FeedbackDesign
 import com.example.feedbacksdk.model.FeedbackField
 import com.example.feedbacksdk.model.FeedbackItem
@@ -91,7 +92,7 @@ internal class FeedbackActivity : AppCompatActivity() {
                 ColorStateList.valueOf(buttonColor)
             findViewById<ProgressBar>(R.id.progressBar).indeterminateTintList =
                 ColorStateList.valueOf(buttonColor)
-        }.onFailure { Log.w("FeedbackSDK", "Failed to apply design colors", it) }
+        }.onFailure { Log.w(LOG_TAG, "Failed to apply design colors", it) }
     }
 
     private fun setupScreenshotToggle() {
@@ -141,7 +142,8 @@ internal class FeedbackActivity : AppCompatActivity() {
             val context = FeedbackSDK.getAppContext() ?: applicationContext
             val feedbackId = UUID.randomUUID().toString()
             val bitmap = ScreenshotHolder.bitmap?.takeIf { includeScreenshot }
-            val screenshotBase64 = ScreenshotUploader.uploadScreenShot(context, bitmap, feedbackId)
+            val screenshotBase64 = ScreenshotPreparer.prepareScreenshot(context, bitmap, feedbackId)
+            ScreenshotHolder.bitmap = null
             val feedbackItem = FeedbackPayloadBuilder.buildFeedbackPayload(
                 context = context,
                 feedbackId = feedbackId,
@@ -160,18 +162,18 @@ internal class FeedbackActivity : AppCompatActivity() {
             FeedbackRepository.sendFeedbackToServer(
                 item = feedbackItem,
                 onSuccess = {
-                    Log.d("FeedbackSDK", "Feedback submitted to backend: ${feedbackItem.feedbackId}")
+                    Log.d(LOG_TAG, "Feedback submitted to backend: ${feedbackItem.feedbackId}")
                     ScreenshotCache.clearTemporaryFiles(context)
                     FeedbackQueue.flush(context)
                     Toast.makeText(this, R.string.feedback_sdk_success, Toast.LENGTH_SHORT).show()
                     finish()
                 },
                 onNetworkError = { e ->
-                    Log.w("FeedbackSDK", "Network error; saving feedback for later", e)
+                    Log.w(LOG_TAG, "Network error; saving feedback for later", e)
                     saveForLater(context, feedbackItem)
                 },
                 onServerError = { e ->
-                    Log.e("FeedbackSDK", "Server rejected feedback", e)
+                    Log.e(LOG_TAG, "Server rejected feedback", e)
                     btnSubmit.isEnabled = true
                     btnSubmit.text = getString(R.string.feedback_sdk_submit)
                     Toast.makeText(

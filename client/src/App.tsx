@@ -1,16 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-import {
-  listFeedback,
-  markAsViewed,
-  openFeedbackDetails,
-  updateFeedbackStatus,
-  type Feedback,
-  type FeedbackStatus,
-} from "./api";
 import { EMPTY_FILTERS, feedbackTypes, filterFeedback, searchFeedback } from "./filters";
 import { exportFeedback } from "./export";
 import { getSession, isAuthenticated, logout } from "./auth";
+import { useFeedback } from "./useFeedback";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import FeedbackToolbar from "./components/FeedbackToolbar";
@@ -24,27 +17,13 @@ type View = "dashboard" | "feedback" | "design" | "designs";
 export default function App() {
   const [authed, setAuthed] = useState(isAuthenticated());
   const [view, setView] = useState<View>("dashboard");
-  const [items, setItems] = useState<Feedback[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [editingDesignId, setEditingDesignId] = useState<number | null>(null);
 
-  const load = useCallback(() => {
-    setLoading(true);
-    setError(null);
-    listFeedback()
-      .then((data) => setItems(data))
-      .catch((e: unknown) => setError(e instanceof Error ? e.message : "Failed to load feedback"))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (authed) load();
-  }, [authed, load]);
+  const { items, loading, error, setError, selectedId, selected, load, openDetails, changeStatus, markViewed } =
+    useFeedback(authed);
 
   useEffect(() => {
     const handleExpired = () => {
@@ -53,57 +32,13 @@ export default function App() {
     };
     window.addEventListener("auth:expired", handleExpired);
     return () => window.removeEventListener("auth:expired", handleExpired);
-  }, []);
+  }, [setError]);
 
   const visible = useMemo(
     () => filterFeedback(searchFeedback(items, query), filters),
     [items, query, filters],
   );
   const types = useMemo(() => feedbackTypes(items), [items]);
-  const selected = useMemo(
-    () => items.find((item) => item.feedbackId === selectedId) ?? null,
-    [items, selectedId],
-  );
-
-  const replaceItem = useCallback((updated: Feedback) => {
-    setItems((prev) => prev.map((i) => (i.feedbackId === updated.feedbackId ? updated : i)));
-  }, []);
-
-  const openDetails = useCallback(
-    async (id: string) => {
-      setSelectedId(id);
-      try {
-        const full = await openFeedbackDetails(id);
-        replaceItem(full);
-        if (!full.viewed) replaceItem(await markAsViewed(id));
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to open feedback");
-      }
-    },
-    [replaceItem],
-  );
-
-  const changeStatus = useCallback(
-    async (id: string, status: FeedbackStatus) => {
-      try {
-        replaceItem(await updateFeedbackStatus(id, status));
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to update status");
-      }
-    },
-    [replaceItem],
-  );
-
-  const markViewed = useCallback(
-    async (id: string) => {
-      try {
-        replaceItem(await markAsViewed(id));
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to mark as viewed");
-      }
-    },
-    [replaceItem],
-  );
 
   const handleLogout = () => {
     logout();
